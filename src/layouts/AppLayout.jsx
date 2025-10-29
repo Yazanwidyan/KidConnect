@@ -1,27 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 
 import Footer from "./Footer";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
-const AppLayout = ({ children, userRole = "superAdmin" }) => {
-  const branches = [
-    { id: "b1", name: "Downtown Branch" },
-    { id: "b2", name: "Uptown Branch" },
-  ];
-  const [selectedBranch, setSelectedBranch] = useState(branches[0]);
-
+const AppLayout = ({ children }) => {
   return (
-    <div className="bg-background flex min-h-screen flex-col md:flex-row">
-      <Sidebar
-        userRole={userRole}
-        selectedBranch={selectedBranch}
-        setSelectedBranch={setSelectedBranch}
-        branches={branches}
-      />
-      <div className="flex flex-1 flex-col">
-        <Header userRole={userRole} />
-        <main className="flex-1 p-6">{React.cloneElement(children, { selectedBranch, userRole })}</main>
+    <div className="flex min-h-screen bg-gray-50">
+      {/* Fixed Sidebar */}
+      <Sidebar />
+
+      {/* Main content area (with left margin for sidebar space) */}
+      <div className="ml-64 flex min-h-screen flex-1 flex-col">
+        <Header />
+
+        {/* Page content */}
+        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+
         <Footer />
       </div>
     </div>

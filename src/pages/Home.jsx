@@ -29,14 +29,14 @@ const revenueData = [
   { month: "Jun", revenue: 2000, pending: 250, overdue: 120 },
 ];
 
-const Dashboard = ({ selectedBranch }) => {
+const Home = () => {
   const [selectedMonth, setSelectedMonth] = useState("Jan");
 
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
 
   return (
     <div className="p-6">
-      <h2 className="text-primary mb-6 text-2xl font-semibold">Dashboard</h2>
+      <h2 className="mb-6 text-2xl font-semibold text-primary">Dashboard</h2>
 
       {/* Filters */}
       <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:gap-6">
@@ -60,15 +60,15 @@ const Dashboard = ({ selectedBranch }) => {
       <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-5">
         <div className="rounded-2xl bg-white p-6 shadow-md">
           <p className="text-gray-500">Total Students</p>
-          <h3 className="text-secondary text-3xl font-bold">120</h3>
+          <h3 className="text-3xl font-bold text-secondary">120</h3>
         </div>
         <div className="rounded-2xl bg-white p-6 shadow-md">
           <p className="text-gray-500">Active Teachers</p>
-          <h3 className="text-secondary text-3xl font-bold">15</h3>
+          <h3 className="text-3xl font-bold text-secondary">15</h3>
         </div>
         <div className="rounded-2xl bg-white p-6 shadow-md">
           <p className="text-gray-500">Messages Sent</p>
-          <h3 className="text-secondary text-3xl font-bold">340</h3>
+          <h3 className="text-3xl font-bold text-secondary">340</h3>
         </div>
         <div className="rounded-2xl bg-white p-6 shadow-md">
           <p className="text-gray-500">Pending Invoices</p>
@@ -115,4 +115,4 @@ const Dashboard = ({ selectedBranch }) => {
   );
 };
 
-export default Dashboard;
+export default Home;

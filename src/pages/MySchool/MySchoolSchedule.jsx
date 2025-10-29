@@ -8,12 +8,12 @@ const initialSchedule = [
   { day: "Tuesday", hour: "9:00-10:00", class: "KG2", teacher: "Fatima Omar" },
 ];
 
-const Schedule = () => {
+const MySchoolSchedule = () => {
   const [schedule, setSchedule] = useState(initialSchedule);
 
   return (
     <div className="p-6">
-      <h2 className="text-primary mb-6 text-2xl font-semibold">Schedule / Timetable</h2>
+      <h2 className="mb-6 text-2xl font-semibold text-primary">Schedule / Timetable</h2>
 
       <div className="overflow-x-auto rounded-lg shadow-md">
         <table className="w-full table-auto border-collapse bg-white">
@@ -55,4 +55,4 @@ const Schedule = () => {
   );
 };
 
-export default Schedule;
+export default MySchoolSchedule;

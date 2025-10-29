@@ -1,149 +1,181 @@
 import React, { useState } from "react";
 import {
-  FaBars,
-  FaBuilding,
-  FaCalendarAlt,
-  FaChalkboardTeacher,
-  FaCog,
-  FaEnvelope,
-  FaMoneyBillAlt,
-  FaTachometerAlt,
-  FaTimes,
-  FaUserGraduate,
+  FaChevronDown,
+  FaComments,
+  FaGift,
+  FaHome,
+  FaMoneyBillWave,
+  FaQuestionCircle,
+  FaSchool,
+  FaUserPlus,
 } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 
-import { permissions } from "../config/permissions";
-
-const Sidebar = ({ userRole, selectedBranch, setSelectedBranch, branches }) => {
+const Sidebar = () => {
+  const [openSchool, setOpenSchool] = useState(true);
   const location = useLocation();
-  const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  const menuItemsMap = {
-    dashboard: { name: "Dashboard", icon: <FaTachometerAlt />, path: "/" },
-    students: { name: "Students", icon: <FaUserGraduate />, path: "/students" },
-    attendance: { name: "Attendance", icon: <FaCalendarAlt />, path: "/attendance" },
-    teachers: { name: "Teachers", icon: <FaChalkboardTeacher />, path: "/teachers" },
-    classes: { name: "Classes", icon: <FaChalkboardTeacher />, path: "/classes" },
-    schedule: { name: "Schedule", icon: <FaCalendarAlt />, path: "/schedule" },
-    messages: { name: "Messages", icon: <FaEnvelope />, path: "/messages" },
-    billing: { name: "Billing", icon: <FaMoneyBillAlt />, path: "/billing" },
-    settings: { name: "Settings", icon: <FaCog />, path: "/settings" },
-    branches: { name: "Branches", icon: <FaBuilding />, path: "/branches" },
-  };
-
-  const menuItems = permissions[userRole].map((key) => menuItemsMap[key]);
 
   return (
-    <>
-      {/* Mobile Top Bar */}
-      <div className="flex items-center justify-between bg-white p-4 shadow-md md:hidden">
-        <h1 className="text-primary text-xl font-bold">KidConnect</h1>
-        <button onClick={() => setMobileOpen(true)} className="text-gray-600">
-          <FaBars size={24} />
-        </button>
+    <aside className="fixed left-0 top-0 z-50 flex h-screen w-64 flex-col bg-[#3A49F9] text-white shadow-lg">
+      {/* Logo */}
+      <div className="border-b border-white/10 p-4 text-center text-2xl font-bold tracking-wide">
+        KidConnect
       </div>
 
-      {/* Branch selector */}
-      {userRole === "superAdmin" && branches.length > 1 && (
-        <div className="hidden p-4 md:block">
-          <label className="font-medium">Select Branch:</label>
-          <select
-            className="mt-2 w-full rounded border px-3 py-2"
-            value={selectedBranch}
-            onChange={(e) => setSelectedBranch(e.target.value)}
-          >
-            {branches.map((b) => (
-              <option key={b.id} value={b.id}>
-                {b.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+      {/* Main Navigation */}
+      <nav className="flex-1 overflow-y-auto">
+        <ul className="space-y-1 px-2 py-3">
+          {/* Home */}
+          <li>
+            <Link
+              to="/"
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-white/10 ${
+                location.pathname === "/" ? "bg-white/20" : ""
+              }`}
+            >
+              <FaHome />
+              <span>Home</span>
+            </Link>
+          </li>
 
-      {/* Desktop Sidebar */}
-      <aside
-        className={`hidden flex-col bg-white shadow-md transition-all duration-300 md:flex ${
-          collapsed ? "w-20" : "w-64"
-        } min-h-screen`}
-      >
-        <div className="flex items-center justify-between border-b p-4">
-          {!collapsed && <h1 className="text-primary text-xl font-bold">KidConnect</h1>}
-          <button onClick={() => setCollapsed(!collapsed)} className="text-gray-600 hover:text-gray-900">
-            {collapsed ? "»" : "«"}
-          </button>
-        </div>
-        <nav className="mt-4 flex-1 overflow-y-auto">
-          <ul className="space-y-1">
-            {menuItems.map((item) => (
-              <li key={item.name}>
-                <Link
-                  to={item.path}
-                  className={`flex items-center gap-3 rounded px-4 py-3 transition hover:bg-blue-50 ${
-                    location.pathname === item.path ? "bg-blue-100 font-semibold" : ""
-                  }`}
-                >
-                  <span className="text-lg">{item.icon}</span>
-                  {!collapsed && <span>{item.name}</span>}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </aside>
-
-      {/* Mobile Sidebar */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 flex">
-          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setMobileOpen(false)}></div>
-          <aside className="relative z-50 flex w-64 flex-col bg-white shadow-md">
-            <div className="flex items-center justify-between border-b p-4">
-              <h1 className="text-primary text-xl font-bold">KidConnect</h1>
-              <button onClick={() => setMobileOpen(false)} className="text-gray-600">
-                <FaTimes size={24} />
-              </button>
-            </div>
-            {userRole === "superAdmin" && branches.length > 1 && (
-              <div className="p-4">
-                <label className="font-medium">Select Branch:</label>
-                <select
-                  className="mt-2 w-full rounded border px-3 py-2"
-                  value={selectedBranch}
-                  onChange={(e) => setSelectedBranch(e.target.value)}
-                >
-                  {branches.map((b) => (
-                    <option key={b.id} value={b.id}>
-                      {b.name}
-                    </option>
-                  ))}
-                </select>
+          {/* My School Dropdown */}
+          <li>
+            <button
+              onClick={() => setOpenSchool(!openSchool)}
+              className="flex w-full items-center justify-between rounded-lg px-3 py-2 transition hover:bg-white/10"
+            >
+              <div className="flex items-center gap-3">
+                <FaSchool />
+                <span>My School</span>
               </div>
-            )}
+              <FaChevronDown className={`transition-transform ${openSchool ? "rotate-180" : ""}`} />
+            </button>
 
-            <nav className="mt-4 flex-1 overflow-y-auto">
-              <ul className="space-y-1">
-                {menuItems.map((item) => (
-                  <li key={item.name}>
+            {openSchool && (
+              <ul className="ml-8 mt-1 space-y-1 text-sm">
+                {["students", "parents", "rooms", "schedules", "menu", "settings"].map((item) => (
+                  <li key={item}>
                     <Link
-                      to={item.path}
-                      onClick={() => setMobileOpen(false)}
-                      className={`flex items-center gap-3 rounded px-4 py-3 transition hover:bg-blue-50 ${
-                        location.pathname === item.path ? "bg-blue-100 font-semibold" : ""
+                      to={`/${item}`}
+                      className={`block rounded-lg px-3 py-2 hover:bg-white/10 ${
+                        location.pathname === `/${item}` ? "bg-white/20" : ""
                       }`}
                     >
-                      <span className="text-lg">{item.icon}</span>
-                      <span>{item.name}</span>
+                      {item.charAt(0).toUpperCase() + item.slice(1)}
                     </Link>
                   </li>
                 ))}
               </ul>
-            </nav>
-          </aside>
-        </div>
-      )}
-    </>
+            )}
+          </li>
+
+          {/* Messaging */}
+          <li>
+            <Link
+              to="/messaging"
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-white/10 ${
+                location.pathname === "/messaging" ? "bg-white/20" : ""
+              }`}
+            >
+              <FaComments />
+              <span>Messaging</span>
+            </Link>
+          </li>
+
+          {/* Admissions */}
+          <li>
+            <Link
+              to="/admissions/dashboard"
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-white/10 ${
+                location.pathname.startsWith("/admissions") ? "bg-white/20" : ""
+              }`}
+            >
+              <FaUserPlus />
+              <span>Admissions</span>
+            </Link>
+          </li>
+          {/* Admissions */}
+          <li>
+            <Link
+              to="/staff/staff"
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-white/10 ${
+                location.pathname.startsWith("/staff") ? "bg-white/20" : ""
+              }`}
+            >
+              <FaUserPlus />
+              <span>Staff and payroll</span>
+            </Link>
+          </li>
+
+          {/* Billing */}
+          <li>
+            <Link
+              to="/billing/dashboard"
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-white/10 ${
+                location.pathname === "/billing" ? "bg-white/20" : ""
+              }`}
+            >
+              <FaMoneyBillWave />
+              <span>Billing</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/documents"
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-white/10 ${
+                location.pathname === "/documents" ? "bg-white/20" : ""
+              }`}
+            >
+              <FaComments />
+              <span>Documents</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/reporting"
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-white/10 ${
+                location.pathname === "/reporting" ? "bg-white/20" : ""
+              }`}
+            >
+              <FaComments />
+              <span> Reporting </span>
+            </Link>
+          </li>
+
+          {/* Free Month */}
+          <li>
+            <Link
+              to="/free-month"
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-white/10 ${
+                location.pathname === "/free-month" ? "bg-white/20" : ""
+              }`}
+            >
+              <FaGift />
+              <span>Free Month!</span>
+            </Link>
+          </li>
+
+          {/* Help */}
+          <li>
+            <Link
+              to="/help"
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-white/10 ${
+                location.pathname === "/help" ? "bg-white/20" : ""
+              }`}
+            >
+              <FaQuestionCircle />
+              <span>Help</span>
+            </Link>
+          </li>
+        </ul>
+      </nav>
+
+      {/* Workspace Box */}
+      <div className="m-3 mt-auto rounded-lg bg-white/10 p-3 text-sm">
+        <p className="text-gray-200">Workspace</p>
+        <p className="font-semibold">ABC Academy</p>
+      </div>
+    </aside>
   );
 };
 

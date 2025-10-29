@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const initialStudents = [
   { id: 1, name: "Ali Ahmad", age: 5, class: "KG1", parent: "Fatima Ahmad" },
@@ -7,7 +8,9 @@ const initialStudents = [
   { id: 3, name: "Yousef Ali", age: 5, class: "KG1", parent: "Laila Ali" },
 ];
 
-const Students = () => {
+const MySchoolStudents = () => {
+  const navigate = useNavigate();
+
   const [students, setStudents] = useState(initialStudents);
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
@@ -47,7 +50,7 @@ const Students = () => {
   return (
     <div className="p-6">
       <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <h2 className="text-primary text-2xl font-semibold">Students</h2>
+        <h2 className="text-2xl font-semibold text-primary">Students</h2>
         <div className="flex gap-2">
           <input
             type="text"
@@ -57,7 +60,7 @@ const Students = () => {
             onChange={(e) => setSearch(e.target.value)}
           />
           <button
-            className="bg-primary rounded px-4 py-2 text-white hover:bg-blue-600"
+            className="rounded bg-primary px-4 py-2 text-white hover:bg-blue-600"
             onClick={() => setModalOpen(true)}
           >
             Add Student
@@ -80,7 +83,9 @@ const Students = () => {
           <tbody>
             {filteredStudents.map((student) => (
               <tr key={student.id} className="border-b hover:bg-gray-50">
-                <td className="px-6 py-3">{student.name}</td>
+                <td onClick={() => navigate("/student/feed")} className="px-6 py-3">
+                  {student.name}
+                </td>
                 <td className="px-6 py-3">{student.age}</td>
                 <td className="px-6 py-3">{student.class}</td>
                 <td className="px-6 py-3">{student.parent}</td>
@@ -164,7 +169,7 @@ const Students = () => {
                 >
                   Cancel
                 </button>
-                <button type="submit" className="bg-primary rounded px-4 py-2 text-white hover:bg-blue-600">
+                <button type="submit" className="rounded bg-primary px-4 py-2 text-white hover:bg-blue-600">
                   {editingStudent ? "Update" : "Add"}
                 </button>
               </div>
@@ -176,4 +181,4 @@ const Students = () => {
   );
 };
 
-export default Students;
+export default MySchoolStudents;
