@@ -2,11 +2,7 @@ import React, { useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-const initialStudents = [
-  { id: 1, name: "Ali Ahmad", age: 5, class: "KG1", parent: "Fatima Ahmad" },
-  { id: 2, name: "Sara Omar", age: 6, class: "KG2", parent: "Omar Khalid" },
-  { id: 3, name: "Yousef Ali", age: 5, class: "KG1", parent: "Laila Ali" },
-];
+const initialStudents = []; // start empty for demo
 
 const MySchoolStudents = () => {
   const navigate = useNavigate();
@@ -15,7 +11,12 @@ const MySchoolStudents = () => {
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
-  const [formData, setFormData] = useState({ name: "", age: "", class: "", parent: "" });
+  const [formData, setFormData] = useState({
+    name: "",
+    age: "",
+    class: "",
+    parent: "",
+  });
 
   const filteredStudents = students.filter((s) => s.name.toLowerCase().includes(search.toLowerCase()));
 
@@ -37,7 +38,12 @@ const MySchoolStudents = () => {
 
   const handleEdit = (student) => {
     setEditingStudent(student);
-    setFormData({ name: student.name, age: student.age, class: student.class, parent: student.parent });
+    setFormData({
+      name: student.name,
+      age: student.age,
+      class: student.class,
+      parent: student.parent,
+    });
     setModalOpen(true);
   };
 
@@ -49,71 +55,98 @@ const MySchoolStudents = () => {
 
   return (
     <div className="p-6">
-      <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <h2 className="text-2xl font-semibold text-primary">Students</h2>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Search by name..."
-            className="rounded border px-3 py-1"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+      {students.length === 0 ? (
+        // 🟢 Empty State
+        <div className="flex h-[70vh] flex-col items-center justify-center text-center">
+          <h2 className="mb-2 text-2xl font-semibold">Student List</h2>
+          <p className="mb-6 text-gray-500">Upload Your Roster</p>
+
+          <h3 className="mb-2 text-xl font-medium">Super simple – send us your student roster to start!</h3>
+          <p className="mb-6 max-w-md text-gray-500">
+            We accept roster exports from other systems! We'll even take partially completed lists with just
+            student names.
+          </p>
+
           <button
-            className="rounded bg-primary px-4 py-2 text-white hover:bg-blue-600"
             onClick={() => setModalOpen(true)}
+            className="rounded bg-primary px-5 py-2 text-white transition hover:bg-blue-600"
           >
-            Add Student
+            Submit your roster
           </button>
+
+          <a href="#" className="mt-4 text-blue-500 hover:underline">
+            Help Center
+          </a>
         </div>
-      </div>
+      ) : (
+        <>
+          {/* 🟦 Header & Search */}
+          <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <h2 className="text-2xl font-semibold text-primary">Students</h2>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Search by name..."
+                className="rounded border px-3 py-1"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <button
+                className="rounded bg-primary px-4 py-2 text-white hover:bg-blue-600"
+                onClick={() => setModalOpen(true)}
+              >
+                Add Student
+              </button>
+            </div>
+          </div>
 
-      {/* Students Table */}
-      <div className="overflow-x-auto rounded-lg shadow-md">
-        <table className="w-full table-auto border-collapse bg-white">
-          <thead>
-            <tr className="bg-gray-100 text-left">
-              <th className="px-6 py-3">Name</th>
-              <th className="px-6 py-3">Age</th>
-              <th className="px-6 py-3">Class</th>
-              <th className="px-6 py-3">Parent</th>
-              <th className="px-6 py-3">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredStudents.map((student) => (
-              <tr key={student.id} className="border-b hover:bg-gray-50">
-                <td onClick={() => navigate("/student/feed")} className="px-6 py-3">
-                  {student.name}
-                </td>
-                <td className="px-6 py-3">{student.age}</td>
-                <td className="px-6 py-3">{student.class}</td>
-                <td className="px-6 py-3">{student.parent}</td>
-                <td className="flex gap-3 px-6 py-3">
-                  <button onClick={() => handleEdit(student)} className="text-blue-600 hover:text-blue-800">
-                    <FaEdit />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(student.id)}
-                    className="text-red-600 hover:text-red-800"
-                  >
-                    <FaTrash />
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {filteredStudents.length === 0 && (
-              <tr>
-                <td colSpan={5} className="py-4 text-center text-gray-500">
-                  No students found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+          {/* 🟦 Students Table */}
+          <div className="overflow-x-auto rounded-lg shadow-md">
+            <table className="w-full table-auto border-collapse bg-white">
+              <thead>
+                <tr className="bg-gray-100 text-left">
+                  <th className="px-6 py-3">Name</th>
+                  <th className="px-6 py-3">Age</th>
+                  <th className="px-6 py-3">Class</th>
+                  <th className="px-6 py-3">Parent</th>
+                  <th className="px-6 py-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredStudents.map((student) => (
+                  <tr key={student.id} className="border-b hover:bg-gray-50">
+                    <td
+                      onClick={() => navigate("/student/feed")}
+                      className="cursor-pointer px-6 py-3 text-blue-600"
+                    >
+                      {student.name}
+                    </td>
+                    <td className="px-6 py-3">{student.age}</td>
+                    <td className="px-6 py-3">{student.class}</td>
+                    <td className="px-6 py-3">{student.parent}</td>
+                    <td className="flex gap-3 px-6 py-3">
+                      <button
+                        onClick={() => handleEdit(student)}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        <FaEdit />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(student.id)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <FaTrash />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
 
-      {/* Add/Edit Student Modal */}
+      {/* 🟩 Add/Edit Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
@@ -164,7 +197,12 @@ const MySchoolStudents = () => {
                   onClick={() => {
                     setModalOpen(false);
                     setEditingStudent(null);
-                    setFormData({ name: "", age: "", class: "", parent: "" });
+                    setFormData({
+                      name: "",
+                      age: "",
+                      class: "",
+                      parent: "",
+                    });
                   }}
                 >
                   Cancel

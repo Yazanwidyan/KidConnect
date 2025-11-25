@@ -1,20 +1,19 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
 
-export default function Admissions() {
+export default function Paperwork() {
   const tabs = [
-    { name: "Dashboard", path: "/admissions/dashboard" },
-    { name: "Admissions packets", path: "/admissions/packets" },
-    { name: "Waitlists", path: "/admissions/waitlists" },
-    { name: "Programs", path: "/admissions/programs" },
+    { name: "Forms & Requests", path: "/paperwork/forms-requests" },
+    { name: "Shared Files", path: "/paperwork/shared-files" },
+    { name: "Sign-ups", path: "/paperwork/signups" },
   ];
 
   return (
     <div className="p-6">
-      <h1 className="mb-6 text-2xl font-semibold">Admissions</h1>
+      <h1 className="mb-6 text-2xl font-semibold">Paperwork</h1>
 
       {/* Tabs */}
-      <div className="mb-6 flex border-b border-gray-200">
+      <div className="mb-6 flex flex-wrap border-b border-gray-200">
         {tabs.map((tab) => (
           <NavLink
             key={tab.path}
@@ -32,7 +31,7 @@ export default function Admissions() {
         ))}
       </div>
 
-      {/* Sub Page Content */}
+      {/* Sub Page Area */}
       <div className="mt-4">
         <Outlet />
       </div>

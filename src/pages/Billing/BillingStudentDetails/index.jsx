@@ -1,17 +1,16 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
 
-export default function Admissions() {
+export default function BillingStudentDetails() {
   const tabs = [
-    { name: "Dashboard", path: "/admissions/dashboard" },
-    { name: "Admissions packets", path: "/admissions/packets" },
-    { name: "Waitlists", path: "/admissions/waitlists" },
-    { name: "Programs", path: "/admissions/programs" },
+    { name: "Currnet Activity", path: "/billing/student/current-activity" },
+    { name: "Upcomming Invoices", path: "/billing/student/upcomming-invoices" },
+    { name: "All Transactions", path: "/billing/student/all-transactions" },
   ];
 
   return (
     <div className="p-6">
-      <h1 className="mb-6 text-2xl font-semibold">Admissions</h1>
+      <h1 className="mb-6 text-2xl font-semibold">Student Name</h1>
 
       {/* Tabs */}
       <div className="mb-6 flex border-b border-gray-200">

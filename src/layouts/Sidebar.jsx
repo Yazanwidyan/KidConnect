@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import {
+  FaBook,
   FaChevronDown,
   FaComments,
+  FaFolderOpen,
   FaGift,
   FaHome,
   FaMoneyBillWave,
@@ -22,7 +24,7 @@ const Sidebar = () => {
         KidConnect
       </div>
 
-      {/* Main Navigation */}
+      {/* Navigation */}
       <nav className="flex-1 overflow-y-auto">
         <ul className="space-y-1 px-2 py-3">
           {/* Home */}
@@ -38,7 +40,7 @@ const Sidebar = () => {
             </Link>
           </li>
 
-          {/* My School Dropdown */}
+          {/* My School */}
           <li>
             <button
               onClick={() => setOpenSchool(!openSchool)}
@@ -82,6 +84,58 @@ const Sidebar = () => {
             </Link>
           </li>
 
+          {/* Billing */}
+          <li>
+            <Link
+              to="/billing/dashboard"
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-white/10 ${
+                location.pathname.startsWith("/billing") ? "bg-white/20" : ""
+              }`}
+            >
+              <FaMoneyBillWave />
+              <span>Billing</span>
+            </Link>
+          </li>
+
+          {/* Expenses */}
+          <li>
+            <Link
+              to="/expenses/dashboard"
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-white/10 ${
+                location.pathname.startsWith("/expenses") ? "bg-white/20" : ""
+              }`}
+            >
+              <FaMoneyBillWave />
+              <span>Expenses</span>
+            </Link>
+          </li>
+
+          {/* Staff and Payroll */}
+          <li>
+            <Link
+              to="/staff/staff"
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-white/10 ${
+                location.pathname.startsWith("/staff") ? "bg-white/20" : ""
+              }`}
+            >
+              <FaUserPlus />
+              <span>Staff & Payroll</span>
+            </Link>
+          </li>
+
+          {/* Learning */}
+          <li>
+            <Link
+              to="/learning"
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-white/10 ${
+                location.pathname.startsWith("/learning") ? "bg-white/20" : ""
+              }`}
+            >
+              <FaBook />
+              <span>Learning</span>
+            </Link>
+          </li>
+
           {/* Admissions */}
           <li>
             <Link
@@ -94,42 +148,21 @@ const Sidebar = () => {
               <span>Admissions</span>
             </Link>
           </li>
-          {/* Admissions */}
+
+          {/* Paperwork */}
           <li>
             <Link
-              to="/staff/staff"
+              to="/paperwork"
               className={`flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-white/10 ${
-                location.pathname.startsWith("/staff") ? "bg-white/20" : ""
+                location.pathname === "/paperwork" ? "bg-white/20" : ""
               }`}
             >
-              <FaUserPlus />
-              <span>Staff and payroll</span>
+              <FaFolderOpen />
+              <span>Paperwork</span>
             </Link>
           </li>
 
-          {/* Billing */}
-          <li>
-            <Link
-              to="/billing/dashboard"
-              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-white/10 ${
-                location.pathname === "/billing" ? "bg-white/20" : ""
-              }`}
-            >
-              <FaMoneyBillWave />
-              <span>Billing</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/documents"
-              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-white/10 ${
-                location.pathname === "/documents" ? "bg-white/20" : ""
-              }`}
-            >
-              <FaComments />
-              <span>Documents</span>
-            </Link>
-          </li>
+          {/* Reporting */}
           <li>
             <Link
               to="/reporting"
@@ -138,33 +171,7 @@ const Sidebar = () => {
               }`}
             >
               <FaComments />
-              <span> Reporting </span>
-            </Link>
-          </li>
-
-          {/* Free Month */}
-          <li>
-            <Link
-              to="/free-month"
-              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-white/10 ${
-                location.pathname === "/free-month" ? "bg-white/20" : ""
-              }`}
-            >
-              <FaGift />
-              <span>Free Month!</span>
-            </Link>
-          </li>
-
-          {/* Help */}
-          <li>
-            <Link
-              to="/help"
-              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-white/10 ${
-                location.pathname === "/help" ? "bg-white/20" : ""
-              }`}
-            >
-              <FaQuestionCircle />
-              <span>Help</span>
+              <span>Reporting</span>
             </Link>
           </li>
         </ul>

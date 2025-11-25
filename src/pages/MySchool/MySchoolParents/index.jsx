@@ -1,17 +1,16 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
 
-export default function Admissions() {
+export default function MySchoolParents() {
   const tabs = [
-    { name: "Dashboard", path: "/admissions/dashboard" },
-    { name: "Admissions packets", path: "/admissions/packets" },
-    { name: "Waitlists", path: "/admissions/waitlists" },
-    { name: "Programs", path: "/admissions/programs" },
+    { name: "Parents", path: "/parents/parents" },
+    { name: "Family", path: "/parents/family" },
+    { name: "Approved Pickups", path: "/parents/approved-pickups" },
   ];
 
   return (
     <div className="p-6">
-      <h1 className="mb-6 text-2xl font-semibold">Admissions</h1>
+      <h1 className="mb-6 text-2xl font-semibold">Parents</h1>
 
       {/* Tabs */}
       <div className="mb-6 flex border-b border-gray-200">
