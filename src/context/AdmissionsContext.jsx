@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState } from "react";
 const AdmissionsContext = createContext();
 
 export function AdmissionsProvider({ children }) {
-  // Sample initial data
+  // ------------------ STUDENTS ------------------
   const [students, setStudents] = useState([
     {
       id: "s1",
@@ -25,9 +25,9 @@ export function AdmissionsProvider({ children }) {
       status: "Applied",
       room: "Preschool",
     },
-    // ...
   ]);
 
+  // ------------------ PACKETS ------------------
   const [packets, setPackets] = useState([
     {
       id: "p1",
@@ -37,15 +37,16 @@ export function AdmissionsProvider({ children }) {
       fee: 15,
       status: "Active",
     },
-    // ...
   ]);
 
+  // ------------------ PROGRAMS ------------------
   const [programs, setPrograms] = useState([
     { id: "prog1", name: "Toddlers" },
     { id: "prog2", name: "Preschool" },
     { id: "prog3", name: "Kindergarten" },
   ]);
 
+  // ------------------ WAITLIST ------------------
   const [waitlists, setWaitlists] = useState([
     {
       id: "w1",
@@ -67,7 +68,9 @@ export function AdmissionsProvider({ children }) {
     },
   ]);
 
-  // --- Methods to update / add data ---
+  // -------------------------------------------------------
+  // STUDENTS ACTIONS
+  // -------------------------------------------------------
 
   function addStudent(student) {
     setStudents((prev) => [...prev, { id: `s${prev.length + 1}`, ...student }]);
@@ -77,6 +80,10 @@ export function AdmissionsProvider({ children }) {
     setStudents((prev) => prev.map((s) => (s.id === id ? { ...s, ...updates } : s)));
   }
 
+  // -------------------------------------------------------
+  // PACKET ACTIONS
+  // -------------------------------------------------------
+
   function addPacket(packet) {
     setPackets((prev) => [...prev, { id: `p${prev.length + 1}`, ...packet }]);
   }
@@ -85,19 +92,62 @@ export function AdmissionsProvider({ children }) {
     setPackets((prev) => prev.map((p) => (p.id === id ? { ...p, ...updates } : p)));
   }
 
-  function enrollFromWaitlist(waitlistId) {
-    const waitlistEntry = waitlists.find((w) => w.id === waitlistId);
-    if (!waitlistEntry) return;
+  // -------------------------------------------------------
+  // PROGRAM ACTIONS  (NEW)
+  // -------------------------------------------------------
 
-    // Move student from waitlist to "Applied" or "Enrolled"
-    updateStudent(waitlistEntry.studentId, { status: "Enrolled" });
-    // Remove from waitlist
-    setWaitlists((prev) => prev.filter((w) => w.id !== waitlistId));
+  function addProgram(program) {
+    setPrograms((prev) => [...prev, { id: `prog${prev.length + 1}`, ...program }]);
+  }
+
+  function updateProgram(id, updates) {
+    setPrograms((prev) => prev.map((p) => (p.id === id ? { ...p, ...updates } : p)));
+  }
+
+  // -------------------------------------------------------
+  // WAITLIST ACTIONS
+  // -------------------------------------------------------
+
+  function enrollFromWaitlist(waitlistId) {
+    const entry = waitlists.find((w) => w.id === waitlistId);
+    if (!entry) return;
+
+    const student = students.find((s) => s.id === entry.studentId);
+    if (!student) return;
+
+    // 1. Update student's status
+    setStudents((prev) => prev.map((s) => (s.id === student.id ? { ...s, status: "Applied" } : s)));
+
+    // 2. Remove and reorder waitlist
+    setWaitlists((prev) => {
+      const remaining = prev.filter((w) => w.id !== waitlistId);
+      const sameRoom = remaining.filter((w) => w.room === entry.room);
+
+      const reordered = sameRoom
+        .sort((a, b) => a.position - b.position)
+        .map((w, i) => ({ ...w, position: i + 1 }));
+
+      return [...reordered, ...remaining.filter((w) => w.room !== entry.room)];
+    });
   }
 
   function deleteWaitlist(waitlistId) {
-    setWaitlists((prev) => prev.filter((w) => w.id !== waitlistId));
+    const entry = waitlists.find((w) => w.id === waitlistId);
+    if (!entry) return;
+
+    setWaitlists((prev) => {
+      const remaining = prev.filter((w) => w.id !== waitlistId);
+      const sameRoom = remaining.filter((w) => w.room === entry.room);
+
+      const reordered = sameRoom
+        .sort((a, b) => a.position - b.position)
+        .map((w, i) => ({ ...w, position: i + 1 }));
+
+      return [...reordered, ...remaining.filter((w) => w.room !== entry.room)];
+    });
   }
+
+  // -------------------------------------------------------
 
   return (
     <AdmissionsContext.Provider
@@ -106,10 +156,16 @@ export function AdmissionsProvider({ children }) {
         packets,
         programs,
         waitlists,
+
         addStudent,
         updateStudent,
+
         addPacket,
         updatePacket,
+
+        addProgram, // NEW
+        updateProgram, // NEW
+
         enrollFromWaitlist,
         deleteWaitlist,
       }}

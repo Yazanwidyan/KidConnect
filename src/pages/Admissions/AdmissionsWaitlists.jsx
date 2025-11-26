@@ -1,18 +1,37 @@
 import React, { useState } from "react";
 
 import { useAdmissions } from "../../context/AdmissionsContext";
+import StudentModal from "./modals/StudentModal";
 
 const AdmissionsWaitlists = () => {
   const rooms = ["Preschool", "Kindergarten", "Grade 1"];
   const [selectedRoom, setSelectedRoom] = useState(rooms[0]);
-  const { waitlists, students, enrollFromWaitlist, deleteWaitlist } = useAdmissions();
+  const [addModalOpen, setAddModalOpen] = useState(false);
+
+  const { waitlists, students, enrollFromWaitlist, deleteWaitlist, addToWaitlist } = useAdmissions();
 
   const filteredWaitlists = waitlists
     .filter((wl) => wl.room === selectedRoom)
     .sort((a, b) => a.position - b.position);
 
+  function handleAddStudent(form) {
+    // Add student to waitlist with generated id
+    addToWaitlist({
+      id: Date.now(),
+      room: selectedRoom,
+      studentId: form.id,
+      position: filteredWaitlists.length + 1,
+      paperworkDate: form.paperworkDate || "",
+      desiredStart: form.desiredStart || "",
+      sibling: form.sibling || "No",
+    });
+
+    setAddModalOpen(false);
+  }
+
   return (
     <div className="flex h-screen font-sans">
+      {/* Sidebar Rooms */}
       <div className="w-56 border-r border-gray-300 p-4">
         <h3 className="mb-4 text-lg font-semibold">Rooms</h3>
         <ul className="space-y-2">
@@ -30,8 +49,21 @@ const AdmissionsWaitlists = () => {
         </ul>
       </div>
 
+      {/* Main Section */}
       <div className="flex-1 overflow-auto p-6">
-        <h2 className="mb-4 text-2xl font-semibold">{selectedRoom} Waitlist</h2>
+        {/* Header */}
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-2xl font-semibold">{selectedRoom} Waitlist</h2>
+
+          <button
+            onClick={() => setAddModalOpen(true)}
+            className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          >
+            + Add Student to Waitlist
+          </button>
+        </div>
+
+        {/* Table */}
         <div className="overflow-x-auto">
           <table className="min-w-full border border-gray-200">
             <thead className="bg-yellow-100">
@@ -75,6 +107,15 @@ const AdmissionsWaitlists = () => {
           </table>
         </div>
       </div>
+
+      {/* Add Student Modal */}
+      {addModalOpen && (
+        <StudentModal
+          student={null}
+          onClose={() => setAddModalOpen(false)}
+          onSave={handleAddStudent} // optional, depending how your modal works
+        />
+      )}
     </div>
   );
 };

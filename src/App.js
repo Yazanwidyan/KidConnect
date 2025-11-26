@@ -8,6 +8,7 @@ import AppLayout from "./layouts/AppLayout";
 import AdminSettings from "./pages/AdminSettings";
 import Admissions from "./pages/Admissions";
 import AdmissionsDashboard from "./pages/Admissions/AdmissionsDashboard";
+import AdmissionsPacketDetails from "./pages/Admissions/AdmissionsPacketDetails";
 import AdmissionsPackets from "./pages/Admissions/AdmissionsPackets";
 import AdmissionsPrograms from "./pages/Admissions/AdmissionsPrograms";
 import AdmissionsWaitlists from "./pages/Admissions/AdmissionsWaitlists";
@@ -195,8 +196,10 @@ export default function App() {
         <Route path="/admissions" element={<Admissions />}>
           <Route path="dashboard" element={<AdmissionsDashboard />} />
           <Route path="packets" element={<AdmissionsPackets />} />
+          <Route path="packets/:id" element={<AdmissionsPacketDetails />} />
           <Route path="waitlists" element={<AdmissionsWaitlists />} />
           <Route path="programs" element={<AdmissionsPrograms />} />
+
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>
 

@@ -1,12 +1,19 @@
 import React, { useState } from "react";
 import { FiSearch } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 import { useAdmissions } from "../../context/AdmissionsContext";
+import { usePaperwork } from "../../context/PaperworkContext";
+import NewPacketModal from "./modals/NewPacketModal";
 
 export default function AdmissionsPackets() {
+  const navigate = useNavigate();
+
   const { packets } = useAdmissions();
+  const { forms } = usePaperwork();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilters, setStatusFilters] = useState(["Active", "Draft", "Closed"]);
+  const [showModal, setShowModal] = useState(false);
 
   // Filter packets by search term and status
   const filteredPackets = packets.filter(
@@ -26,7 +33,12 @@ export default function AdmissionsPackets() {
   return (
     <div className="w-full p-6">
       <h1 className="mb-6 text-2xl font-semibold">Admissions Packets</h1>
-
+      <button
+        onClick={() => setShowModal(true)}
+        className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+      >
+        + New Packet
+      </button>
       {/* Filters */}
       <div className="mb-4 flex flex-wrap items-center gap-4">
         <div className="relative w-60">
@@ -82,7 +94,12 @@ export default function AdmissionsPackets() {
             ) : (
               filteredPackets.map((packet) => (
                 <tr key={packet.id} className="border-b hover:bg-gray-50">
-                  <td className="cursor-pointer px-4 py-3 text-blue-600">{packet.name}</td>
+                  <td
+                    onClick={() => navigate(`/admissions/packets/${packet.id}`)}
+                    className="cursor-pointer px-4 py-3 text-blue-600 hover:underline"
+                  >
+                    {packet.name}
+                  </td>{" "}
                   <td className="px-4 py-3">{packet.students}</td>
                   <td className="px-4 py-3">{packet.due === "-" ? "—" : packet.due}</td>
                   <td className="px-4 py-3 font-medium text-blue-600">
@@ -108,6 +125,7 @@ export default function AdmissionsPackets() {
           </tbody>
         </table>
       </div>
+      {showModal && <NewPacketModal onClose={() => setShowModal(false)} />}
     </div>
   );
 }

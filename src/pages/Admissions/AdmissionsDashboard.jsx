@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { useAdmissions } from "../../context/AdmissionsContext";
+import StudentModal from "./modals/StudentModal";
 
 export default function AdmissionsDashboard() {
   const { students } = useAdmissions();
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [addModalOpen, setAddModalOpen] = useState(false);
 
   // Calculate counts
   const totalStudents = students.length;
@@ -14,6 +17,7 @@ export default function AdmissionsDashboard() {
 
   return (
     <div>
+      {/* ---- Stats ---- */}
       <div className="mb-6 grid grid-cols-5 gap-4">
         {[
           { label: "Total Students", value: totalStudents },
@@ -29,8 +33,19 @@ export default function AdmissionsDashboard() {
         ))}
       </div>
 
+      {/* ---- Student List ---- */}
       <div className="rounded-lg bg-white p-4 shadow">
-        <h2 className="mb-3 text-lg font-semibold">Student List</h2>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-semibold">Student List</h2>
+
+          <button
+            onClick={() => setAddModalOpen(true)}
+            className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          >
+            + Add Student
+          </button>
+        </div>
+
         <table className="w-full border-collapse text-left">
           <thead>
             <tr className="border-b text-gray-600">
@@ -45,7 +60,9 @@ export default function AdmissionsDashboard() {
           <tbody>
             {students.map((student) => (
               <tr key={student.id} className="border-b hover:bg-gray-50">
-                <td className="cursor-pointer p-2 text-blue-600">{student.name}</td>
+                <td className="cursor-pointer p-2 text-blue-600" onClick={() => setSelectedStudent(student)}>
+                  {student.name}
+                </td>
                 <td className="p-2">{student.age}</td>
                 <td className="p-2">{student.programs.join(", ")}</td>
                 <td className="p-2">{student.paperworkDate}</td>
@@ -56,6 +73,17 @@ export default function AdmissionsDashboard() {
           </tbody>
         </table>
       </div>
+
+      {/* ---- Edit Modal ---- */}
+      {selectedStudent && <StudentModal student={selectedStudent} onClose={() => setSelectedStudent(null)} />}
+
+      {/* ---- Add Modal ---- */}
+      {addModalOpen && (
+        <StudentModal
+          student={null} // ← Add mode
+          onClose={() => setAddModalOpen(false)}
+        />
+      )}
     </div>
   );
 }
