@@ -1,158 +1,109 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const StaffMain = () => {
+import { useStaff } from "../../context/StaffContext";
+
+export default function StaffMain() {
   const navigate = useNavigate();
+  const { staff, addStaff } = useStaff();
+  const [modal, setModal] = useState(false);
 
-  const [staffData, setStaffData] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john@example.com",
-      role: "Teacher",
-      status: "Active",
-      checkIn: "08:00 AM",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane@example.com",
-      role: "Administrator",
-      status: "Inactive",
-      checkIn: "09:00 AM",
-    },
-  ]);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [form, setForm] = useState({
     name: "",
     email: "",
+    phone: "",
     role: "",
     status: "Active",
-    checkIn: "",
+    department: "",
+    hourlyRate: 0,
+    defaultCheckIn: "",
+    defaultCheckOut: "",
   });
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleAddStaff = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const newStaff = { ...form, id: Date.now() };
-    setStaffData([...staffData, newStaff]);
-    setForm({ name: "", email: "", role: "", status: "Active", checkIn: "" });
-    setIsModalOpen(false);
+    addStaff(form);
+    setModal(false);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <h1 className="mb-4 text-2xl font-bold">School Staff</h1>
+    <div>
+      <div className="mb-4 flex justify-between">
+        <h2 className="text-xl font-bold">All Staff</h2>
+        <button className="rounded bg-blue-500 px-4 py-2 text-white" onClick={() => setModal(true)}>
+          + Add Staff
+        </button>
+      </div>
 
-      {/* Add Staff Button */}
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="mb-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-      >
-        Add Staff
-      </button>
-
-      {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="relative w-full max-w-md rounded-lg bg-white p-6">
-            <h2 className="mb-4 text-xl font-bold">Add New Staff</h2>
-            <button
-              className="absolute right-3 top-3 text-gray-500 hover:text-gray-700"
-              onClick={() => setIsModalOpen(false)}
+      {/* Table */}
+      <table className="min-w-full rounded bg-white shadow">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="px-4 py-2 text-left">Name</th>
+            <th className="px-4 py-2 text-left">Email</th>
+            <th className="px-4 py-2 text-left">Role</th>
+            <th className="px-4 py-2 text-left">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {staff.map((s) => (
+            <tr
+              key={s.id}
+              className="cursor-pointer hover:bg-gray-50"
+              onClick={() => navigate(`/staff/${s.id}`)}
             >
+              <td className="border px-4 py-2">{s.name}</td>
+              <td className="border px-4 py-2">{s.email}</td>
+              <td className="border px-4 py-2">{s.role}</td>
+              <td className="border px-4 py-2">{s.status}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {modal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50">
+          <div className="relative w-96 rounded-lg bg-white p-6">
+            <h2 className="mb-4 text-lg font-bold">Add Staff</h2>
+
+            <button onClick={() => setModal(false)} className="absolute right-3 top-3 text-gray-600">
               ✕
             </button>
-            <form onSubmit={handleAddStaff} className="grid grid-cols-1 gap-4">
+
+            <form className="grid gap-3" onSubmit={handleSubmit}>
+              <input name="name" onChange={handleChange} placeholder="Name" className="rounded border p-2" />
               <input
-                type="text"
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                placeholder="Name"
-                className="rounded border border-gray-300 px-3 py-2"
-                required
-              />
-              <input
-                type="email"
                 name="email"
-                value={form.email}
                 onChange={handleChange}
                 placeholder="Email"
-                className="rounded border border-gray-300 px-3 py-2"
-                required
+                className="rounded border p-2"
               />
               <input
-                type="text"
-                name="role"
-                value={form.role}
+                name="phone"
                 onChange={handleChange}
-                placeholder="Role"
-                className="rounded border border-gray-300 px-3 py-2"
-                required
+                placeholder="Phone"
+                className="rounded border p-2"
               />
-              <select
-                name="status"
-                value={form.status}
-                onChange={handleChange}
-                className="rounded border border-gray-300 px-3 py-2"
-              >
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
+              <input name="role" onChange={handleChange} placeholder="Role" className="rounded border p-2" />
               <input
-                type="time"
-                name="checkIn"
-                value={form.checkIn}
+                name="department"
                 onChange={handleChange}
-                className="rounded border border-gray-300 px-3 py-2"
-                required
+                placeholder="Department"
+                className="rounded border p-2"
               />
-              <button type="submit" className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
-                Add Staff
-              </button>
+              <input
+                name="hourlyRate"
+                onChange={handleChange}
+                placeholder="Hourly Rate"
+                className="rounded border p-2"
+              />
+              <button className="rounded bg-blue-600 py-2 text-white">Add</button>
             </form>
           </div>
         </div>
       )}
-
-      {/* Staff Table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full rounded-lg border border-gray-200 bg-white">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="border-b px-4 py-2 text-left">Name</th>
-              <th className="border-b px-4 py-2 text-left">Email</th>
-              <th className="border-b px-4 py-2 text-left">Role</th>
-              <th className="border-b px-4 py-2 text-left">Status</th>
-              <th className="border-b px-4 py-2 text-left">Check In</th>
-            </tr>
-          </thead>
-          <tbody>
-            {staffData.map((staff) => (
-              <tr key={staff.id} className="hover:bg-gray-50" onClick={() => navigate(`/staff/${staff.id}`)}>
-                <td className="border-b px-4 py-2">{staff.name}</td>
-                <td className="border-b px-4 py-2">{staff.email}</td>
-                <td className="border-b px-4 py-2">{staff.role}</td>
-                <td
-                  className={`border-b px-4 py-2 font-semibold ${
-                    staff.status === "Active" ? "text-green-600" : "text-red-600"
-                  }`}
-                >
-                  {staff.status}
-                </td>
-                <td className="border-b px-4 py-2">{staff.checkIn}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
     </div>
   );
-};
-
-export default StaffMain;
+}

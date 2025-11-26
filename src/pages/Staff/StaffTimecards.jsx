@@ -1,50 +1,96 @@
 import React, { useState } from "react";
 
-const initialTimecards = [
-  { id: 1, name: "John Doe", date: "2025-10-29", checkIn: "08:00 AM", checkOut: "04:00 PM", totalHours: 8 },
-  { id: 2, name: "Jane Smith", date: "2025-10-29", checkIn: "09:00 AM", checkOut: "05:00 PM", totalHours: 8 },
-  {
-    id: 3,
-    name: "Michael Brown",
-    date: "2025-10-29",
-    checkIn: "08:30 AM",
-    checkOut: "04:30 PM",
-    totalHours: 8,
-  },
-];
+import { useStaff } from "../../context/StaffContext";
 
-const StaffTimecards = () => {
-  const [timecards, setTimecards] = useState(initialTimecards);
+export default function StaffTimecards() {
+  const { staff, timecards, addTimecard } = useStaff();
+  const [modal, setModal] = useState(false);
+
+  const [form, setForm] = useState({
+    staffId: "",
+    date: "",
+    checkIn: "",
+    checkOut: "",
+    totalHours: 0,
+  });
+
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const calcHours = () => {
+    const start = new Date(`01/01/2020 ${form.checkIn}`);
+    const end = new Date(`01/01/2020 ${form.checkOut}`);
+    const diff = (end - start) / 1000 / 3600;
+    setForm({ ...form, totalHours: diff });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    calcHours();
+    addTimecard(form);
+    setModal(false);
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <h1 className="mb-4 text-2xl font-bold">Staff Timecards</h1>
-      <div className="overflow-x-auto">
-        <table className="min-w-full rounded-lg border border-gray-200 bg-white">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="border-b px-4 py-2 text-left">Name</th>
-              <th className="border-b px-4 py-2 text-left">Date</th>
-              <th className="border-b px-4 py-2 text-left">Check In</th>
-              <th className="border-b px-4 py-2 text-left">Check Out</th>
-              <th className="border-b px-4 py-2 text-left">Total Hours</th>
-            </tr>
-          </thead>
-          <tbody>
-            {timecards.map((card) => (
-              <tr key={card.id} className="hover:bg-gray-50">
-                <td className="border-b px-4 py-2">{card.name}</td>
-                <td className="border-b px-4 py-2">{card.date}</td>
-                <td className="border-b px-4 py-2">{card.checkIn}</td>
-                <td className="border-b px-4 py-2">{card.checkOut}</td>
-                <td className="border-b px-4 py-2">{card.totalHours}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div>
+      <div className="mb-4 flex justify-between">
+        <h2 className="text-xl font-bold">Timecards</h2>
+
+        <button className="rounded bg-blue-500 px-4 py-2 text-white" onClick={() => setModal(true)}>
+          + Add Timecard
+        </button>
       </div>
+
+      <table className="min-w-full rounded bg-white shadow">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="px-4 py-2">Name</th>
+            <th>Date</th>
+            <th>Check-In</th>
+            <th>Check-Out</th>
+            <th>Hours</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {timecards.map((t) => {
+            const st = staff.find((x) => x.id === Number(t.staffId));
+            return (
+              <tr key={t.id} className="border-b">
+                <td className="px-4 py-2">{st?.name}</td>
+                <td>{t.date}</td>
+                <td>{t.checkIn}</td>
+                <td>{t.checkOut}</td>
+                <td>{t.totalHours}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+
+      {modal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50">
+          <div className="w-96 rounded bg-white p-6 shadow">
+            <h3 className="mb-4 font-bold">Add Timecard</h3>
+
+            <form className="grid gap-3" onSubmit={handleSubmit}>
+              <select name="staffId" className="border p-2" onChange={handleChange}>
+                <option>Select Staff</option>
+                {staff.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+
+              <input type="date" name="date" onChange={handleChange} className="border p-2" />
+              <input type="time" name="checkIn" onChange={handleChange} className="border p-2" />
+              <input type="time" name="checkOut" onChange={handleChange} className="border p-2" />
+
+              <button className="rounded bg-blue-600 py-2 text-white">Add</button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
-};
-
-export default StaffTimecards;
+}

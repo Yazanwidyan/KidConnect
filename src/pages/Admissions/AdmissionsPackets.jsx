@@ -1,50 +1,57 @@
-import React from "react";
+import React, { useState } from "react";
 import { FiSearch } from "react-icons/fi";
 
+import { useAdmissions } from "../../context/AdmissionsContext";
+
 export default function AdmissionsPackets() {
-  const packets = [
-    {
-      name: "Registration for Infant rooms 2025 - 2026",
-      students: 0,
-      due: "Oct 3, 2025",
-      fee: "$15",
-      status: "Active",
-    },
-    {
-      name: "2024 Registration Packet for Infant Class",
-      students: 1,
-      due: "-",
-      fee: "None",
-      status: "Active",
-    },
-    {
-      name: "Admissions packet (May 2025)",
-      students: 1,
-      due: "-",
-      fee: "$125",
-      status: "Active",
-    },
-  ];
+  const { packets } = useAdmissions();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilters, setStatusFilters] = useState(["Active", "Draft", "Closed"]);
+
+  // Filter packets by search term and status
+  const filteredPackets = packets.filter(
+    (packet) =>
+      packet.name.toLowerCase().includes(searchTerm.toLowerCase()) && statusFilters.includes(packet.status)
+  );
+
+  // Toggle a status filter
+  function toggleFilter(status) {
+    if (statusFilters.includes(status)) {
+      setStatusFilters(statusFilters.filter((s) => s !== status));
+    } else {
+      setStatusFilters([...statusFilters, status]);
+    }
+  }
 
   return (
     <div className="w-full p-6">
-      <h1 className="mb-6 text-2xl font-semibold">Admissions packets</h1>
+      <h1 className="mb-6 text-2xl font-semibold">Admissions Packets</h1>
 
       {/* Filters */}
-      <div className="mb-4 flex items-center gap-4">
+      <div className="mb-4 flex flex-wrap items-center gap-4">
         <div className="relative w-60">
           <FiSearch className="absolute left-3 top-3 text-gray-400" />
           <input
             type="text"
-            placeholder="Search"
+            placeholder="Search packets"
             className="w-full rounded-lg border py-2 pl-10 pr-3 text-sm"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
-        <div className="flex w-auto items-center gap-2 rounded-lg border px-3 py-2 text-sm">
-          <span className="rounded bg-gray-100 px-2 py-1">Draft ✕</span>
-          <span className="rounded bg-gray-100 px-2 py-1">Active ✕</span>
-          <span className="rounded bg-gray-100 px-2 py-1">Closed ✕</span>
+        <div className="flex flex-wrap items-center gap-2 rounded-lg border px-3 py-2 text-sm">
+          {["Draft", "Active", "Closed"].map((status) => (
+            <span
+              key={status}
+              onClick={() => toggleFilter(status)}
+              className={`cursor-pointer rounded px-2 py-1 ${
+                statusFilters.includes(status) ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600"
+              }`}
+            >
+              {status} ✕
+            </span>
+          ))}
         </div>
       </div>
 
@@ -58,7 +65,7 @@ export default function AdmissionsPackets() {
           <thead>
             <tr className="border-b text-left text-gray-600">
               <th className="px-4 py-3">Packet</th>
-              <th className="px-4 py-3">Total students</th>
+              <th className="px-4 py-3">Total Students</th>
               <th className="px-4 py-3">Due</th>
               <th className="px-4 py-3">Fee</th>
               <th className="px-4 py-3">Status</th>
@@ -66,20 +73,38 @@ export default function AdmissionsPackets() {
             </tr>
           </thead>
           <tbody>
-            {packets.map((row, idx) => (
-              <tr key={idx} className="border-b hover:bg-gray-50">
-                <td className="cursor-pointer px-4 py-3 text-blue-600">{row.name}</td>
-                <td className="px-4 py-3">{row.students}</td>
-                <td className="px-4 py-3">{row.due}</td>
-                <td className="px-4 py-3 font-medium text-blue-600">{row.fee}</td>
-                <td className="px-4 py-3">
-                  <span className="rounded-full bg-blue-100 px-3 py-1 text-xs text-blue-600 shadow">
-                    {row.status}
-                  </span>
+            {filteredPackets.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="px-4 py-3 text-center text-gray-500">
+                  No packets found.
                 </td>
-                <td className="cursor-pointer px-4 py-3 text-blue-600">Actions ▾</td>
               </tr>
-            ))}
+            ) : (
+              filteredPackets.map((packet) => (
+                <tr key={packet.id} className="border-b hover:bg-gray-50">
+                  <td className="cursor-pointer px-4 py-3 text-blue-600">{packet.name}</td>
+                  <td className="px-4 py-3">{packet.students}</td>
+                  <td className="px-4 py-3">{packet.due === "-" ? "—" : packet.due}</td>
+                  <td className="px-4 py-3 font-medium text-blue-600">
+                    {packet.fee === 0 ? "None" : `$${packet.fee}`}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs shadow ${
+                        packet.status === "Active"
+                          ? "bg-blue-100 text-blue-600"
+                          : packet.status === "Draft"
+                            ? "bg-gray-200 text-gray-700"
+                            : "bg-gray-300 text-gray-500"
+                      }`}
+                    >
+                      {packet.status}
+                    </span>
+                  </td>
+                  <td className="cursor-pointer px-4 py-3 text-blue-600">Actions ▾</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

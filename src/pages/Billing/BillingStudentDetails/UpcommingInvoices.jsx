@@ -1,17 +1,26 @@
 import React from "react";
+import { useParams } from "react-router-dom";
 
-// Sample upcoming invoices for a single student
-const studentInvoices = [
-  { id: 1, dueDate: "2025-12-01", amount: "$200", status: "Pending" },
-  { id: 2, dueDate: "2025-12-15", amount: "$50", status: "Pending" },
-];
+import { useBilling } from "../../../context/BillingContext";
 
-const UpcomingInvoices = ({ studentName }) => {
+const UpcomingInvoices = () => {
+  const { id: studentId } = useParams();
+  const { students, invoices } = useBilling();
+
+  const student = students.find((s) => s.id === studentId);
+
+  // Filter invoices with status 'Pending' or 'Overdue' (upcoming)
+  const upcomingInvoices = invoices
+    .filter((inv) => inv.studentId === studentId && (inv.status === "Pending" || inv.status === "Overdue"))
+    .sort((a, b) => new Date(a.date) - new Date(b.date)); // sort ascending by date
+
   return (
     <div className="p-6 font-sans">
-      <h2 className="mb-4 text-2xl font-semibold">{studentName}'s Upcoming Invoices</h2>
+      <h2 className="mb-4 text-2xl font-semibold">
+        {student ? `${student.name}'s` : "Student's"} Upcoming Invoices
+      </h2>
 
-      {studentInvoices.length === 0 ? (
+      {upcomingInvoices.length === 0 ? (
         <p className="text-gray-500">No upcoming invoices.</p>
       ) : (
         <div className="overflow-x-auto rounded-lg shadow-md">
@@ -24,11 +33,11 @@ const UpcomingInvoices = ({ studentName }) => {
               </tr>
             </thead>
             <tbody>
-              {studentInvoices.map((invoice) => (
-                <tr key={invoice.id} className="border-b hover:bg-gray-50">
-                  <td className="px-4 py-2">{invoice.dueDate}</td>
-                  <td className="px-4 py-2">{invoice.amount}</td>
-                  <td className="px-4 py-2">{invoice.status}</td>
+              {upcomingInvoices.map((inv) => (
+                <tr key={inv.id} className="border-b hover:bg-gray-50">
+                  <td className="px-4 py-2">{inv.date}</td>
+                  <td className="px-4 py-2">{(inv.amount / 100).toFixed(2)}</td>
+                  <td className="px-4 py-2">{inv.status}</td>
                 </tr>
               ))}
             </tbody>

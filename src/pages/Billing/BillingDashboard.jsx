@@ -1,39 +1,22 @@
 import React, { useState } from "react";
 
-// Sample data
-const rooms = ["Preschool", "Kindergarten", "Grade 1"];
-const transactionsData = [
-  {
-    id: 1,
-    child: "Adam Smith",
-    room: "Preschool",
-    invoiceDate: "2025-10-20",
-    amount: "$500",
-    status: "Paid",
-  },
-  {
-    id: 2,
-    child: "Emma Johnson",
-    room: "Kindergarten",
-    invoiceDate: "2025-10-22",
-    amount: "$450",
-    status: "Pending",
-  },
-  {
-    id: 3,
-    child: "Mia Smith",
-    room: "Preschool",
-    invoiceDate: "2025-10-25",
-    amount: "$500",
-    status: "Overdue",
-  },
-];
+import { useBilling } from "../../context/BillingContext";
 
-const BillingDashboard = () => {
+function Dashboard() {
+  const { totals, invoices, students } = useBilling();
   const [selectedRoom, setSelectedRoom] = useState("All Rooms");
 
-  const filteredTransactions =
-    selectedRoom === "All Rooms" ? transactionsData : transactionsData.filter((t) => t.room === selectedRoom);
+  // Extract unique rooms from students + add "All Rooms" option
+  const rooms = ["All Rooms", ...Array.from(new Set(students.map((s) => s.room)))];
+
+  // Filter invoices by selected room
+  const filtered =
+    selectedRoom === "All Rooms"
+      ? invoices
+      : invoices.filter((i) => {
+          const st = students.find((s) => s.id === i.studentId);
+          return st?.room === selectedRoom;
+        });
 
   return (
     <div className="p-6 font-sans">
@@ -43,19 +26,19 @@ const BillingDashboard = () => {
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded bg-blue-500 p-4 text-white shadow">
           <p className="text-lg font-semibold">Total Invoices</p>
-          <p className="mt-2 text-2xl">{transactionsData.length}</p>
+          <p className="mt-2 text-2xl">{totals.totalInvoices}</p>
         </div>
         <div className="rounded bg-green-500 p-4 text-white shadow">
           <p className="text-lg font-semibold">Paid</p>
-          <p className="mt-2 text-2xl">{transactionsData.filter((t) => t.status === "Paid").length}</p>
+          <p className="mt-2 text-2xl">{totals.paid}</p>
         </div>
         <div className="rounded bg-yellow-500 p-4 text-white shadow">
           <p className="text-lg font-semibold">Pending</p>
-          <p className="mt-2 text-2xl">{transactionsData.filter((t) => t.status === "Pending").length}</p>
+          <p className="mt-2 text-2xl">{totals.pending}</p>
         </div>
         <div className="rounded bg-red-500 p-4 text-white shadow">
           <p className="text-lg font-semibold">Overdue</p>
-          <p className="mt-2 text-2xl">{transactionsData.filter((t) => t.status === "Overdue").length}</p>
+          <p className="mt-2 text-2xl">{totals.overdue}</p>
         </div>
       </div>
 
@@ -67,14 +50,15 @@ const BillingDashboard = () => {
           onChange={(e) => setSelectedRoom(e.target.value)}
           className="rounded border border-gray-300 px-2 py-1"
         >
-          <option>All Rooms</option>
-          {rooms.map((room) => (
-            <option key={room}>{room}</option>
+          {rooms.map((r) => (
+            <option key={r} value={r}>
+              {r}
+            </option>
           ))}
         </select>
       </div>
 
-      {/* Transactions Table */}
+      {/* Invoice Table */}
       <div className="overflow-x-auto">
         <table className="min-w-full border border-gray-200">
           <thead className="bg-yellow-100">
@@ -84,40 +68,36 @@ const BillingDashboard = () => {
               <th className="px-4 py-2 text-left">Invoice Date</th>
               <th className="px-4 py-2 text-left">Amount</th>
               <th className="px-4 py-2 text-left">Status</th>
-              <th className="px-4 py-2 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {filteredTransactions.map((t) => (
-              <tr key={t.id} className="border-b border-gray-200">
-                <td className="px-4 py-2">{t.child}</td>
-                <td className="px-4 py-2">{t.room}</td>
-                <td className="px-4 py-2">{t.invoiceDate}</td>
-                <td className="px-4 py-2">{t.amount}</td>
-                <td
-                  className={`px-4 py-2 font-semibold ${
-                    t.status === "Paid"
-                      ? "text-green-600"
-                      : t.status === "Pending"
-                        ? "text-yellow-600"
-                        : "text-red-600"
-                  }`}
-                >
-                  {t.status}
-                </td>
-                <td className="space-x-2 px-4 py-2">
-                  <button className="rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600">View</button>
-                  <button className="rounded bg-orange-500 px-3 py-1 text-white hover:bg-orange-600">
-                    Edit
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {filtered.map((inv) => {
+              const st = students.find((s) => s.id === inv.studentId);
+              return (
+                <tr key={inv.id} className="border-b border-gray-200">
+                  <td className="px-4 py-2">{st?.name || "Unknown"}</td>
+                  <td className="px-4 py-2">{st?.room || "N/A"}</td>
+                  <td className="px-4 py-2">{inv.date}</td>
+                  <td className="px-4 py-2">${(inv.amount / 100).toFixed(2)}</td>
+                  <td
+                    className={`px-4 py-2 font-semibold ${
+                      inv.status === "Paid"
+                        ? "text-green-600"
+                        : inv.status === "Pending"
+                          ? "text-yellow-600"
+                          : "text-red-600"
+                    }`}
+                  >
+                    {inv.status}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
     </div>
   );
-};
+}
 
-export default BillingDashboard;
+export default Dashboard;

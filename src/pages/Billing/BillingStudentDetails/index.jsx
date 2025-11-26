@@ -1,16 +1,18 @@
 import React from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useParams } from "react-router-dom";
 
 export default function BillingStudentDetails() {
+  const { id } = useParams();
+
   const tabs = [
-    { name: "Currnet Activity", path: "/billing/student/current-activity" },
-    { name: "Upcomming Invoices", path: "/billing/student/upcomming-invoices" },
-    { name: "All Transactions", path: "/billing/student/all-transactions" },
+    { name: "Current Activity", path: "current-activity" },
+    { name: "Upcoming Invoices", path: "upcoming-invoices" },
+    { name: "All Transactions", path: "all-transactions" },
   ];
 
   return (
     <div className="p-6">
-      <h1 className="mb-6 text-2xl font-semibold">Student Name</h1>
+      <h1 className="mb-6 text-2xl font-semibold">Student ID: {id}</h1>
 
       {/* Tabs */}
       <div className="mb-6 flex border-b border-gray-200">

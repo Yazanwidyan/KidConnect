@@ -23,7 +23,11 @@ import UpcommingInvoices from "./pages/Billing/BillingStudentDetails/UpcommingIn
 import BillingStudents from "./pages/Billing/BillingStudents";
 import BillingSubsidies from "./pages/Billing/BillingSubsidies";
 import Documents from "./pages/Documents";
+import Expenses from "./pages/Expenses";
+import AddExpense from "./pages/Expenses/AddExpense";
+import Categories from "./pages/Expenses/Categories";
 import ExpensesDashboard from "./pages/Expenses/ExpensesDashboard";
+import ExpensesList from "./pages/Expenses/ExpensesList";
 import Help from "./pages/Help";
 import Home from "./pages/Home";
 import Learning from "./pages/Learning";
@@ -151,9 +155,9 @@ export default function App() {
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>
 
-        <Route path="/billing/student" element={<BillingStudentDetails />}>
+        <Route path="/billing/student/:id" element={<BillingStudentDetails />}>
           <Route path="current-activity" element={<CurrentActivity />} />
-          <Route path="upcomming-invoices" element={<UpcommingInvoices />} />
+          <Route path="upcoming-invoices" element={<UpcommingInvoices />} />
           <Route path="all-transactions" element={<AllTransactions />} />
           <Route index element={<Navigate to="current-activity" replace />} />
         </Route>
@@ -166,8 +170,15 @@ export default function App() {
         </Route>
 
         {/* -------------------- EXPENSES -------------------- */}
-        <Route path="/expenses/dashboard" element={<ExpensesDashboard />} />
+        <Route path="/expenses" element={<Expenses />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
 
+          {/* Nested routes */}
+          <Route path="dashboard" element={<ExpensesDashboard />} />
+          <Route path="list" element={<ExpensesList />} />
+          <Route path="add" element={<AddExpense />} />
+          <Route path="categories" element={<Categories />} />
+        </Route>
         {/* -------------------- STAFF & PAYROLL -------------------- */}
         <Route path="/staff" element={<Staff />}>
           <Route path="staff" element={<StaffMain />} />

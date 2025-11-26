@@ -1,16 +1,17 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
 
-export default function Staff() {
+export default function Expenses() {
   const tabs = [
-    { name: "Staff", path: "/staff/staff" },
-    { name: "Timecards", path: "/staff/timecards" },
-    { name: "Payroll", path: "/staff/payroll" },
+    { name: "Dashboard", path: "/expenses/dashboard" },
+    { name: "Expenses List", path: "/expenses/list" },
+    { name: "Add Expense", path: "/expenses/add" },
+    { name: "Categories", path: "/expenses/categories" },
   ];
 
   return (
     <div className="p-6">
-      <h1 className="mb-6 text-2xl font-semibold">Staff</h1>
+      <h1 className="mb-6 text-2xl font-semibold">Expenses Management</h1>
 
       <div className="mb-6 flex border-b border-gray-200">
         {tabs.map((tab) => (
@@ -30,7 +31,9 @@ export default function Staff() {
         ))}
       </div>
 
-      <Outlet />
+      <div className="mt-4">
+        <Outlet />
+      </div>
     </div>
   );
 }

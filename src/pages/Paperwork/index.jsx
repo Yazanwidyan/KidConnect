@@ -9,7 +9,7 @@ export default function Paperwork() {
   ];
 
   return (
-    <div className="p-6">
+    <div className="p-6 font-sans">
       <h1 className="mb-6 text-2xl font-semibold">Paperwork</h1>
 
       {/* Tabs */}
